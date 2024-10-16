@@ -15,35 +15,35 @@ return new class extends Migration
         {
             $table->integerIncrements('id')->primary();
             $table->string('email', 255)->unique();
-            $table->boolean('email_verified')->default(false);
-            $table->dateTime('email_verified_at')->nullable();
             $table->string('password', 255);
+            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamps();
+            /*
             $table->dateTime('created_at')->useCurrent();
             $table->dateTime('updated_at')->useCurrentOnUpdate()->useCurrent();
+            */
         });
 
         
         Schema::create('users', function (Blueprint $table) {
             $table->integerIncrements('id')->primary();
-            $table->integer('credential_id', false, true)->unique();
+            $table->unsignedInteger('credential_id')->unique();
             $table->string('name', 255);
             $table->string('surname', 255);
             $table->dateTime('birthday');
-            $table->integer('dni', false, true)->unique();
+            $table->unsignedInteger('dni')->unique();
             $table->boolean('is_enabled')->default(true);
             $table->enum('role',['PATIENT', 'DOCTOR', 'ADMINISTRATOR']);
             $table->string('profile_img_path',255);
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrentOnUpdate()->useCurrent();
+            $table->timestamps();
 
             $table->foreign('credential_id')->references('id')->on('users_credentials');
         });
 
         Schema::create('patients', function (Blueprint $table) {
             $table->integerIncrements('id')->primary();
-            $table->integer('insurance_number', false, true)->unique();
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrentOnUpdate()->useCurrent();
+            $table->unsignedInteger('insurance_number')->unique();
+            $table->timestamps();
 
             $table->foreign('id')->references('id')->on('users');
         });

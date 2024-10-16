@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->integerIncrements('id')->primary();
-            $table->integer('doctor_id', false, true);
-            $table->integer('specialty_id', false, true);
+            $table->unsignedInteger('doctor_id');
+            $table->unsignedInteger('specialty_id');
             $table->enum('state', ['PENDING', 'CANCELLED_BY_PATIENT', 'CANCELLED_BY_DOCTOR', 'CANCELLED_BY_ADMIN', 'REJECTED', 'ACCEPTED', 'COMPLETED']);
             $table->dateTime('scheduled_at');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrentOnUpdate()->useCurrent();
+            $table->datetimes();
             
             $table->foreign('doctor_id')->references('id')->on('users');
             $table->foreign('specialty_id')->references('id')->on('specialties');

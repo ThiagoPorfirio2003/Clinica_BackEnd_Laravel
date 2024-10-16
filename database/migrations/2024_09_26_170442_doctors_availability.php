@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('specialties', function (Blueprint $table) {
             $table->integerIncrements('id')->primary();
             $table->string('name', 255)->unique();
-            $table->integer('avg_appointment_minutes', false, true);
-            $table->dateTime('created_at')->useCurrent();
+            $table->unsignedSmallInteger('avg_appointment_minutes');
+            $table->timestamp('created_at')->useCurrent();
             //$table->dateTime('updated_at')->useCurrentOnUpdate()->useCurrent();
         }); 
         
         Schema::create('doctor_specialities', function (Blueprint $table) {
-            $table->integer('doctor_id', false, true);
-            $table->integer('specialty_id', false, true);
-            $table->dateTime('created_at')->useCurrent();
+            $table->unsignedInteger('doctor_id');
+            $table->unsignedInteger('specialty_id');
+            $table->timestamp('created_at')->useCurrent();
 
             $table->primary(['doctor_id', 'specialty_id']);
             $table->foreign('doctor_id')->references('id')->on('users');
@@ -31,13 +31,12 @@ return new class extends Migration
 
         Schema::create('doctors_availabilities', function (Blueprint $table) {
             $table->integerIncrements('id')->primary();
-            $table->integer('doctor_id', false, true);
-            $table->integer('specialty_id', false, true);
+            $table->unsignedInteger('doctor_id');
+            $table->unsignedInteger('specialty_id');
             $table->enum('day_of_week', ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY']);
             $table->time('start_time');
             $table->time('end_time');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrentOnUpdate()->useCurrent();
+            $table->timestamps();
 
             $table->foreign('doctor_id')->references('id')->on('users');
             $table->foreign('specialty_id')->references('id')->on('specialties');
