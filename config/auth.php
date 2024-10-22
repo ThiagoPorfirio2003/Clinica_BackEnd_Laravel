@@ -40,6 +40,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        
+        'api' => [
+            'driver' => 'token', // Puedes usar 'token' o 'passport' si estás usando Laravel Passport
+            'provider' => 'users',
+            'hash' => false, // Cambia a true si estás usando contraseñas hasheadas
+        ],
     ],
 
     /*
@@ -62,7 +68,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', App\Models\UserCredential::class),
         ],
 
         // 'users' => [
