@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Models\UserCredential;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -14,12 +15,13 @@ Route::get('/a', function(Request $r)
    return 'HOLA';
 });//->middleware('web');
 
-Route::post('/register', function(Request $r)
+Route::post('/register', [UserController::class, 'create']);
+/*
 {
    $newAuthData = new UserCredential();
 
-   $newAuthData->email = $r->email;
-   $newAuthData->password = Hash::make($r->password);
+   //$newAuthData->email = $r->email;
+   //$newAuthData->password = Hash::make($r->password);
 
    $newAuthData->fill($r->all());
 
@@ -28,3 +30,4 @@ Route::post('/register', function(Request $r)
 
    return ['a'=> 'HOLA', 'Estado'=> $estado, 'ALL' => $r->all()];
 });//->middleware('web');
+*/
