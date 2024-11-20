@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users_credentials', function (Blueprint $table)
+        Schema::create('user_credentials', function (Blueprint $table)
         {
             $table->integerIncrements('id')->primary();
             $table->string('email', 255)->unique();
-            $table->string('password', 255);
+            $table->string('password_hash', 255);
             $table->rememberToken();
             //$table->string('remember_token', 100)->nullable();
             $table->timestamp('email_verified_at')->nullable();
@@ -26,19 +26,19 @@ return new class extends Migration
             */
         });
 
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('user_profiles', function (Blueprint $table) {
             $table->integerIncrements('id')->primary();
             $table->unsignedInteger('credential_id')->unique();
             $table->string('name', 255);
             $table->string('surname', 255);
-            $table->dateTime('birthday');
+            $table->date('birthdate');
             $table->unsignedInteger('dni')->unique();
             $table->boolean('is_enabled')->default(true);
             $table->enum('role',['PATIENT', 'DOCTOR', 'ADMINISTRATOR']);
-            $table->string('profile_img_path',255);
+            $table->string('img_name',255);
             $table->timestamps();
 
-            $table->foreign('credential_id')->references('id')->on('users_credentials');
+            $table->foreign('credential_id')->references('id')->on('user_credentials');
         });
 
         Schema::create('patients', function (Blueprint $table) {
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->unsignedInteger('insurance_number')->unique();
             $table->timestamps();
 
-            $table->foreign('id')->references('id')->on('users');
+            $table->foreign('id')->references('id')->on('user_profiles');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('scheduled_at');
             $table->datetimes();
             
-            $table->foreign('doctor_id')->references('id')->on('users');
+            $table->foreign('doctor_id')->references('id')->on('user_profiles');
             $table->foreign('specialty_id')->references('id')->on('specialties');
         });
 

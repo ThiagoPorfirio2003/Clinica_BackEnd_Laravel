@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Entities\Credentials;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class UserCredentials extends Authenticatable
+class UserCredentialModel extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'users_credentials';
+    protected $table = 'user_credentials';
     /**
      * The attributes that are mass assignable.
      *
@@ -20,8 +20,8 @@ class UserCredentials extends Authenticatable
      */
     protected $fillable = [
        // 'name',
-        'email',
-        'password',
+       // 'email',
+    //'password',
     ];
 
 

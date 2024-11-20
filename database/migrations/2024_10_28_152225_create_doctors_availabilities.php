@@ -19,17 +19,17 @@ return new class extends Migration
             //$table->dateTime('updated_at')->useCurrentOnUpdate()->useCurrent();
         }); 
         
-        Schema::create('doctors_specialities', function (Blueprint $table) {
+        Schema::create('doctor_specialities', function (Blueprint $table) {
             $table->unsignedInteger('doctor_id');
             $table->unsignedInteger('specialty_id');
             $table->timestamp('created_at')->useCurrent();
 
             $table->primary(['doctor_id', 'specialty_id']);
-            $table->foreign('doctor_id')->references('id')->on('users');
+            $table->foreign('doctor_id')->references('id')->on('user_profiles');
             $table->foreign('specialty_id')->references('id')->on('specialties');
         });
 
-        Schema::create('doctors_availabilities', function (Blueprint $table) {
+        Schema::create('doctor_availabilities', function (Blueprint $table) {
             $table->integerIncrements('id')->primary();
             $table->unsignedInteger('doctor_id');
             $table->unsignedInteger('specialty_id');
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->time('end_time');
             $table->timestamps();
 
-            $table->foreign('doctor_id')->references('id')->on('users');
+            $table->foreign('doctor_id')->references('id')->on('user_profiles');
             $table->foreign('specialty_id')->references('id')->on('specialties');
         });
     }
