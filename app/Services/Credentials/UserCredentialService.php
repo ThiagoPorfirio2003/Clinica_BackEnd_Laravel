@@ -10,11 +10,6 @@ class UserCredentialService
     /*
     No se si sera de utilidad
 
-    public function emailExists(string $email): bool
-    {
-        return UserCredentialModel::where('email', $email)->exists();
-    }
-
     public function emailIsUniqe(string $email) : array
     {
         $validationErrors = array();
@@ -27,6 +22,11 @@ class UserCredentialService
         return $validationErrors;
     }
     */
+
+    public function emailExists(string $email): bool
+    {
+        return UserCredentialModel::where('email', $email)->exists();
+    }
 
     public function hashPassword(string $password) : string
     {

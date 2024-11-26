@@ -2,8 +2,14 @@
 
 namespace App\Services\User;
 
+use App\Entities\Users\Profile\UserProfileModel;
+
 class UserProfileService{
     
+    public function dniExists(int $dni) : bool
+    {
+        return UserProfileModel::where('dni', $dni)->exists();
+    }
 
     /*
     No se si sera util

@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Entities\Credentials\NewUserCredentialDTO;
 use App\Entities\Users\Profile\newUserProfileDTO;
 use App\Entities\Users\UserRoles;
+use App\Http\Requests\userRegisterRequest;
 use App\Services\Credentials\UserCredentialService;
 use App\Services\StorageService;
-use App\Services\UserProfileService;
+//use App\Services\UserProfileService;
 use App\Support\Status\MyHTTPStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,13 +18,15 @@ class UserController extends Controller
 {
     public function __construct(        
         private UserCredentialService $userCredentialsService,
-        private StorageService $storageService,
-        private UserProfileService $userService)
+        private StorageService $storageService)
+//        private UserProfileService $userService)
     {}
 
-    public function register(Request $request) : JsonResponse
+    public function register(userRegisterRequest $request) : JsonResponse
     {
         $registerStatus = MyHTTPStatus::createStatusServerError();
+
+        $requestData = $request->validated();
         /*
         email
         password
@@ -34,7 +37,7 @@ class UserController extends Controller
         dni
         isEnabled (Si no viene, por defecto es true)
         role
-        profileImg tipo UploadedFile
+        img tipo UploadedFile
 
         Informacion segun el tipo de usuario, puede ser el
         insuranceNumber
