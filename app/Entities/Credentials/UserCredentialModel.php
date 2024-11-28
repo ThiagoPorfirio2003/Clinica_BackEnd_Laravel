@@ -3,7 +3,10 @@
 namespace App\Entities\Credentials;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Entities\Users\Profile\UserProfileModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -51,4 +54,14 @@ class UserCredentialModel extends Authenticatable
         ];
     }
     */
+
+    public function getAuthPassword()
+    {
+        return $this->pass_hash;
+    }
+
+    public function userProfile(): HasOne
+    {
+        return $this->hasOne(UserProfileModel::class, 'credential_id');
+    }
 }

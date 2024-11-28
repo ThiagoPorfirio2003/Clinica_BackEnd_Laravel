@@ -28,7 +28,7 @@ class NewUserCredentialDTO
         $userCredentialModel = new UserCredentialModel();
 
         $userCredentialModel->email = $this->email;
-        $userCredentialModel->password_hash = $this->passwordHash;
+        $userCredentialModel->pass_hash = $this->passwordHash;
 
         return $userCredentialModel;
     }

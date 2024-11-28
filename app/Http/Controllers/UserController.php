@@ -8,10 +8,8 @@ use App\Entities\Users\UserRoles;
 use App\Http\Requests\userRegisterRequest;
 use App\Services\Credentials\UserCredentialService;
 use App\Services\StorageService;
-//use App\Services\UserProfileService;
 use App\Support\Status\MyHTTPStatus;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class UserController extends Controller
@@ -26,57 +24,57 @@ class UserController extends Controller
     {
         $registerStatus = MyHTTPStatus::createStatusServerError();
 
-        $requestData = $request->validated();
-        /*
-        email
-        password
-
-        name
-        surname
-        birthdate
-        dni
-        isEnabled (Si no viene, por defecto es true)
-        role
-        img tipo UploadedFile
-
-        Informacion segun el tipo de usuario, puede ser el
-        insuranceNumber
-        */
-        /*
-        Validar que los datos cumplan las condiciones
-        Validar el/los archivos
-        Validar que los datos no pertenezcan a otro usuario (email, dni, numero de obra social, etc) 
-        */
-
+        $validatedData = $request->validated();
+/*
         //En vez de ->input() preferiria usar ->post() pero no hay una forma de convinar ->post con metodo
         //como ->date() ->enum() ->only
 
-        $newUserCredentialDTO = new NewUserCredentialDTO($request->post('email'),
-        $this->userCredentialsService->hashPassword($request->post('password')));
 
-        $userRole = UserRoles::fromInt((int) $request->post('role'));
+        //return Auth::check($request->password, '$2y$12$7bjLRj4fMnPlJS4cS8AWkuNGqCRC4i/xpKHgkFgxHru0z4zqvpzT2');
+
+        $miRetorno['input'] = $request->post();
+
+        $miRetorno['email'] = $request->post('email');
+        $miRetorno['password'] = $request->post('password');
+        $miRetorno['hash'] = $this->userCredentialsService->hashPassword($miRetorno['password']);
+        $miRetorno['rehash'] = Hash::needsRehash($miRetorno['hash']);
+
+        $miRetorno['validacion'] = Hash::check($miRetorno['password'], $miRetorno['hash']);
+
+        $newUserCredentialDTO = new NewUserCredentialDTO($request['email'], $miRetorno['hash']);
+
+        $modelo = $newUserCredentialDTO->toModel();
+
+        $miRetorno['model'] = $modelo;
+
+        $modelo->save();
+
+        //$miRetorno['db_model'] = UserCredentialModel::where('pass_hash', $miRetorno['hash'])->get();
+        $miRetorno['db_model'] = UserCredentialModel::where('email', $miRetorno['email'])->get();
+
+
+        //$miRetorno['newValidation'] = $miRetorno['hash'] === $miRetorno['db_model']->pass_hash;
+
+        $miRetorno['can_login'] = Auth::attempt(['email' => $miRetorno['email'], 'password' => $miRetorno['password']]);
+
+        return new Response($miRetorno);*/
+
+        $newUserCredentialDTO = new NewUserCredentialDTO($validatedData['email'],
+        $this->userCredentialsService->hashPassword($validatedData['password']));
+
+        $userRole = UserRoles::fromInt((int) $validatedData['role']);
 
         $newUserProfileDTO = new newUserProfileDTO(
             $request->post('name'),
             $request->post('surname'),
             new Carbon($request->post('birthdate')),
             $request->post('dni'),
-            $userRole == UserRoles::PACIENT,
+            array_key_exists('isEnabled', $validatedData) ? $validatedData['isEnabled'] : $userRole == UserRoles::PACIENT
+            /* || isEnable si es que este atributo existe y el usuario que realizo la 
+            request es administrador*/,
             $userRole,
             $request->file('img'),
         );
-
-        /*
-            Podria agregar un array con la informacion del tipo de usuario en especifico,
-            si es que tiene
-        */
-
-        /*
-            Quizas aca deba agregar un array cuya informacion debe ser numerica y tiene
-            que ser transformada de tipo string a tipo int
-
-            Despues convinar ese array con $registerPost
-        */
 
         $userCredentialModel = $newUserCredentialDTO->toModel();
 

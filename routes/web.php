@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,7 +26,6 @@ Route::post('/login', function (Request $request) {
 
     if(Auth::attempt(['email'=> $request->email, 'password'=> $request->password]))
     {
-
         return 'EXITOS';
     }
     else

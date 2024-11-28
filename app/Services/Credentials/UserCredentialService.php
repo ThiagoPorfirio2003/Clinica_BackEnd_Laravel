@@ -7,22 +7,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserCredentialService
 {
-    /*
-    No se si sera de utilidad
-
-    public function emailIsUniqe(string $email) : array
-    {
-        $validationErrors = array();
-
-        if($this->emailExists($email))
-        {
-            $validationErrors['email'] = 'El email recibido pertenece a otro usuario';
-        }
-
-        return $validationErrors;
-    }
-    */
-
     public function emailExists(string $email): bool
     {
         return UserCredentialModel::where('email', $email)->exists();
