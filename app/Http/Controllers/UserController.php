@@ -82,14 +82,15 @@ class UserController extends Controller
         {
             if($userCredentialModel->save())
             {
-                $profileImgName = $this->storageService->defineFileName($userCredentialModel->id . '_0', $newUserProfileDTO->img);
+                //$profileImgName = $this->storageService->defineFileName($userCredentialModel->id . '_0', $newUserProfileDTO->img);
+                $profileImgName = $this->storageService->createFileName($newUserProfileDTO->img->extension());
 
                 //Debo agregar algo para cuando son varias fotos
                 $newUserProfileModel = $newUserProfileDTO->toModel($userCredentialModel->id, $profileImgName);
 
                 if($newUserProfileModel->save())
                 {
-                    $registerStatus = $this->storageService->saveUserAvatar($profileImgName, $newUserProfileDTO->img)->myHTTPStatus;
+                    $registerStatus = $this->storageService->saveUserAvatar($newUserProfileModel->id, $newUserProfileDTO->img, $profileImgName)->myHTTPStatus;
 
                     if($registerStatus->status == 201)
                     {
