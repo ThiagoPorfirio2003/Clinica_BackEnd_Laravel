@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Entities\Credentials\NewUserCredentialDTO;
+use App\Entities\Users\Patient\BasePatientDTO;
 use App\Entities\Users\Profile\newUserProfileDTO;
 use App\Entities\Users\UserRoles;
 use App\Http\Requests\userRegisterRequest;
@@ -25,39 +26,6 @@ class UserController extends Controller
         $registerStatus = MyHTTPStatus::createStatusServerError();
 
         $validatedData = $request->validated();
-/*
-        //En vez de ->input() preferiria usar ->post() pero no hay una forma de convinar ->post con metodo
-        //como ->date() ->enum() ->only
-
-
-        //return Auth::check($request->password, '$2y$12$7bjLRj4fMnPlJS4cS8AWkuNGqCRC4i/xpKHgkFgxHru0z4zqvpzT2');
-
-        $miRetorno['input'] = $request->post();
-
-        $miRetorno['email'] = $request->post('email');
-        $miRetorno['password'] = $request->post('password');
-        $miRetorno['hash'] = $this->userCredentialsService->hashPassword($miRetorno['password']);
-        $miRetorno['rehash'] = Hash::needsRehash($miRetorno['hash']);
-
-        $miRetorno['validacion'] = Hash::check($miRetorno['password'], $miRetorno['hash']);
-
-        $newUserCredentialDTO = new NewUserCredentialDTO($request['email'], $miRetorno['hash']);
-
-        $modelo = $newUserCredentialDTO->toModel();
-
-        $miRetorno['model'] = $modelo;
-
-        $modelo->save();
-
-        //$miRetorno['db_model'] = UserCredentialModel::where('pass_hash', $miRetorno['hash'])->get();
-        $miRetorno['db_model'] = UserCredentialModel::where('email', $miRetorno['email'])->get();
-
-
-        //$miRetorno['newValidation'] = $miRetorno['hash'] === $miRetorno['db_model']->pass_hash;
-
-        $miRetorno['can_login'] = Auth::attempt(['email' => $miRetorno['email'], 'password' => $miRetorno['password']]);
-
-        return new Response($miRetorno);*/
 
         $newUserCredentialDTO = new NewUserCredentialDTO($validatedData['email'],
         $this->userCredentialsService->hashPassword($validatedData['password']));
@@ -69,9 +37,7 @@ class UserController extends Controller
             $request->post('surname'),
             new Carbon($request->post('birthdate')),
             $request->post('dni'),
-            array_key_exists('isEnabled', $validatedData) ? $validatedData['isEnabled'] : $userRole == UserRoles::PACIENT
-            /* || isEnable si es que este atributo existe y el usuario que realizo la 
-            request es administrador*/,
+            array_key_exists('isEnabled', $validatedData) ? $validatedData['isEnabled'] : $userRole == UserRoles::PATIENT,
             $userRole,
             $request->file('img'),
         );
@@ -82,10 +48,7 @@ class UserController extends Controller
         {
             if($userCredentialModel->save())
             {
-                //$profileImgName = $this->storageService->defineFileName($userCredentialModel->id . '_0', $newUserProfileDTO->img);
                 $profileImgName = $this->storageService->createFileName($newUserProfileDTO->img->extension());
-
-                //Debo agregar algo para cuando son varias fotos
                 $newUserProfileModel = $newUserProfileDTO->toModel($userCredentialModel->id, $profileImgName);
 
                 if($newUserProfileModel->save())
@@ -94,8 +57,27 @@ class UserController extends Controller
 
                     if($registerStatus->status == 201)
                     {
-                        $registerStatus->message = 'Usuario creado exitosamente';
                         //Me falta agregar crear patient, doctor, administrador
+
+                        $registerStatus->message = 'Usuario creado exitosamente';
+
+                        switch($newUserProfileDTO->role)
+                        {
+                            /*
+                            case UserRoles::PATIENT:
+                                $patientModel = BasePatientDTO::fromArray($validatedData)->toModel($newUserProfileModel->id);
+
+                                if(!$patientModel->save())
+                                {
+                                    $registerStatus->message = 'La informacion del paciente no pudo ser guardada';
+                                }
+                                break;
+                            */
+                        }
+                    }
+                    else
+                    {
+                        $registerStatus->message = 'La foto del usuario no pudo ser guardada';
                     }
                 }
                 else

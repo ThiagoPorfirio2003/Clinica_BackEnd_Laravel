@@ -20,7 +20,8 @@ class userRegisterRequest extends FormRequest
     public function authorize(): bool
     {
         /*
-            Si el usuario no esta registrado o es de tipo admin
+            Si el usuario no esta registrado o es de tipo admin.
+            Quizas puedo usar el MW para lo 1ro
         */
         return true;
     }
@@ -49,7 +50,7 @@ class userRegisterRequest extends FormRequest
             'dni' => 'required|integer|between:10000000,80000000', //El valor maximo deberia ser actualizado mas adelante,
             'role' => ['required', Rule::enum(UserRoles::class)],
             'img' => 'required|file|max:'. 1024 * 2 .'|extensions:jpg,png,jpeg|mimes:jpg,png,jpeg',
-            //'isEnabled' => ['required_if:role,' . UserRoles::ADMIN->label()]
+            //'insuranceNumber' => 'required_if:role,' . UserRoles::PATIENT->asString() . '|integer|'
         ];
     }
 
@@ -64,8 +65,6 @@ class userRegisterRequest extends FormRequest
                     
                     try
                     { 
-                        $canRegister = true;
-
                         $hasPermission = false;
                         $hasErrors = true;
                         $fromAdmin = false;
@@ -73,15 +72,12 @@ class userRegisterRequest extends FormRequest
                         $isEnabledExists = array_key_exists('isEnabled', $this->post());
                         $credentialId = Auth::id();
 
-
                         if($credentialId != null)
                         {
                             $credentialModel =  UserCredentialModel::where('id', $credentialId)->first();
 
                             $fromAdmin = UserRoles::fromDataBase($credentialModel->userProfile->role) == UserRoles::ADMIN;
                         }
-
-                        
 
                         if($fromAdmin)
                         {
@@ -108,7 +104,7 @@ class userRegisterRequest extends FormRequest
                         }
                         else
                         {
-                            if(UserRoles::fromInt($this->post('role')) == UserRoles::PACIENT)
+                            if(UserRoles::fromInt($this->post('role')) == UserRoles::PATIENT)
                             {
                                 $hasPermission = true;
 

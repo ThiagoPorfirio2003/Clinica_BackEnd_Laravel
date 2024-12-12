@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SpecialtyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
@@ -33,3 +34,10 @@ Route::post('/login', function (Request $request) {
         return "fracasos";
     }
 });
+
+Route::post('/logout', function(Request $request)
+{
+    Auth::logout();
+});
+
+Route::post('/create/specialty',[SpecialtyController::class, 'create']);
